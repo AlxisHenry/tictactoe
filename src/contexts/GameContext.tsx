@@ -7,11 +7,11 @@ import {
   type GameHistoryRound,
   GameMode,
   Choice,
+  Difficulty,
 } from "../types";
 
 type GameContextType = Game & {
   isPlaying: boolean;
-  setPlayers: (players: Player[]) => void;
   setMode: (mode: GameMode) => void;
   pushToHistory: (history: GameHistoryRound) => void;
   start: (
@@ -24,9 +24,10 @@ type GameContextType = Game & {
 export const GameContext = createContext<GameContextType>({
   isPlaying: false,
   players: [],
+  player1: null,
+  player2: null,
   mode: GameMode.Player,
   history: [],
-  setPlayers: () => {},
   setMode: () => {},
   pushToHistory: () => {},
   start: () => {},
@@ -40,6 +41,8 @@ export const GameProvider = (props: GameProviderProps): JSX.Element => {
   const { children } = props;
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [player1, setPlayer1] = useState<Player | null>(null);
+  const [player2, setPlayer2] = useState<Player | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [mode, setMode] = useState<GameMode>(GameMode.Player);
   const [history, setHistory] = useState<GameHistoryRound[]>([]);
@@ -62,8 +65,7 @@ export const GameProvider = (props: GameProviderProps): JSX.Element => {
       return;
     }
 
-    setPlayers([
-      player1,
+    let p2 =
       player2 && mode !== GameMode.AI
         ? player2
         : {
@@ -72,8 +74,12 @@ export const GameProvider = (props: GameProviderProps): JSX.Element => {
             symbol: Choice.O,
             isAI: true,
             wins: 0,
-          },
-    ]);
+            difficulty: Difficulty.Easy,
+          };
+
+    setPlayer1(player1);
+    setPlayer2(p2);
+    setPlayers([player1, p2]);
     setMode(mode);
     setIsPlaying(true);
   };
@@ -82,13 +88,14 @@ export const GameProvider = (props: GameProviderProps): JSX.Element => {
     <GameContext.Provider
       value={{
         isPlaying,
-        players,
-        setPlayers,
         mode,
         setMode,
         history,
         pushToHistory,
         start,
+        players,
+        player1,
+        player2,
       }}
     >
       {children}

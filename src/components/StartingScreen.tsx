@@ -13,15 +13,14 @@ export const StartingScreen = (): JSX.Element => {
   });
 
   return (
-    <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-500 to-indigo-700 text-white">
-      <h1 class="text-4xl font-bold mb-8">Tic Tac Toe</h1>
-
-      <div class="bg-white text-gray-800 p-6 rounded-lg shadow-lg w-96">
+    <div class="flex flex-col items-center justify-center h-screen">
+      <h1 class="text-5xl font-extrabold text-white mb-8">Tic Tac Toe</h1>
+      <div class="bg-white/5 p-8 rounded-xl shadow-lg backdrop-blur-md border border-white/30 w-96">
         <label class="block mb-4">
-          <span class="text-lg font-semibold">Votre nom</span>
+          <span class="text-lg font-semibold text-white">Votre nom</span>
           <input
             type="text"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-300 focus:ring-opacity-50"
+            class="mt-1 block w-full rounded-md border-gray-300 bg-white/50 text-white shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-300 focus:ring-opacity-50"
             placeholder="Entrez votre nom"
             value={form.player1?.name}
             onChange={(e: any) => {
@@ -47,23 +46,23 @@ export const StartingScreen = (): JSX.Element => {
         </label>
 
         <div class="mb-4">
-          <span class="text-lg font-semibold">Mode de jeu :</span>
+          <span class="text-lg font-semibold text-white">Mode de jeu :</span>
           <div class="mt-2">
-            <label class="inline-flex items-center">
+            <label class="inline-flex items-center text-white">
               <input
                 type="radio"
                 name="mode"
-                class="form-radio text-indigo-600"
+                class="form-radio text-purple-600"
                 checked={form.mode === GameMode.Player}
                 onChange={() => setForm({ ...form, mode: GameMode.Player })}
               />
               <span class="ml-2">Jouer contre un autre joueur</span>
             </label>
-            <label class="inline-flex items-center mt-2">
+            <label class="inline-flex items-center mt-2 text-white">
               <input
                 type="radio"
                 name="mode"
-                class="form-radio text-indigo-600"
+                class="form-radio text-purple-600"
                 checked={form.mode === GameMode.AI}
                 onChange={() => setForm({ ...form, mode: GameMode.AI })}
               />
@@ -74,10 +73,10 @@ export const StartingScreen = (): JSX.Element => {
 
         {form.mode === GameMode.Player && (
           <label class="block mb-4">
-            <span class="text-lg font-semibold">Nom du second joueur</span>
+            <span class="text-lg font-semibold text-white">Nom du second joueur</span>
             <input
               type="text"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-300 focus:ring-opacity-50"
+              class="mt-1 block w-full rounded-md border-gray-300 bg-white/50 text-white shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-300 focus:ring-opacity-50"
               placeholder="Entrez le nom du second joueur"
               onChange={(e: any) => {
                 if (!form.player2) {
@@ -103,7 +102,7 @@ export const StartingScreen = (): JSX.Element => {
         )}
 
         <button
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200"
+          class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition duration-200"
           onClick={() => start(form.mode, form.player1, form.player2)}
         >
           Commencer le jeu

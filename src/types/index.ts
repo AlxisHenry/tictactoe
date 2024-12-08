@@ -3,6 +3,12 @@ export enum Choice {
   O = "O",
 }
 
+export enum Difficulty {
+  Easy = "easy",
+  Medium = "medium",
+  Hard = "hard",
+}
+
 export type Cell = Choice | null;
 
 export type Board = Cell[][];
@@ -13,6 +19,7 @@ export type Player = {
   symbol: Choice;
   isAI: boolean;
   wins: number;
+  difficulty?: Difficulty;
 };
 
 export type Moov = {
@@ -46,6 +53,8 @@ export type GameHistoryRound = {
 
 export type Game = {
   players: Player[];
+  player1: Player | null;
+  player2: Player | null;
   mode: GameMode;
   history: GameHistoryRound[];
 };

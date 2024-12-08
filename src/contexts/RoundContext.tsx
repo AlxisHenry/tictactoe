@@ -45,7 +45,7 @@ const createEmptyBoard = (): Board =>
 export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
   const { children } = props;
 
-  const { players, mode, pushToHistory } = useGame();
+  const { players, player1, player2, mode, pushToHistory } = useGame();
 
   const [board, setBoard] = useState<Board>(createEmptyBoard());
   const [winner, setWinner] = useState<Player | null>(null);
@@ -61,8 +61,8 @@ export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    if (players.length === 0) return;
-    setCurrentPlayer(Math.random() < 0.5 ? players[0] : players[1]);
+    if (players.length === 0 || !player1 || !player2) return;
+    setCurrentPlayer(Math.random() < 0.5 ? player1 : player2);
   }, [players]);
 
   useEffect(() => {
@@ -70,15 +70,20 @@ export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
 
     const moov = getBestMove(board);
 
+    console.log(moov);
+
     if (!moov) return;
 
-    play(moov.x, moov.y);
+    setTimeout(() => play(moov.x, moov.y), 500);
   }, [currentPlayer]);
 
   const finish = (winner: Player | null) => {
+    if (players.length === 0 || !player1 || !player2) return;
+
     pushToHistory({ board, winner, timer });
     setWinner(winner);
     setBoard(createEmptyBoard());
+    setCurrentPlayer(Math.random() < 0.5 ? player1 : player2);
     setTimer(0);
   };
 
@@ -90,7 +95,7 @@ export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
       __board[x][y] = currentPlayer.symbol;
       return __board;
     });
-    setCurrentPlayer(getOpponent(players, currentPlayer.symbol));
+
     winnerCheck();
   };
 
@@ -120,6 +125,8 @@ export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
       }).then(() => finish(null));
       return;
     }
+
+    setCurrentPlayer(getOpponent(players, currentPlayer.symbol));
   };
 
   return (
