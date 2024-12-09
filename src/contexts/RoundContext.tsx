@@ -54,11 +54,11 @@ export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
   useEffect(() => {
     if (mode !== GameMode.AI || currentPlayer.isAI === false) return;
 
-    const moov = getBestMove(board);
+    const move = getBestMove(players, currentPlayer, board);
 
-    if (!moov) return;
+    if (!move) return;
 
-    setTimeout(() => play(moov.x, moov.y), 500);
+    setTimeout(() => play(move.x, move.y), 500);
   }, [currentPlayer]);
 
   const finish = (winner: Player | null) => {

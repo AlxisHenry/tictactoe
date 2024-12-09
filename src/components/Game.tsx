@@ -1,6 +1,6 @@
 import { JSX } from "preact/jsx-runtime";
 import clsx from "clsx";
-import { Choice, type Moov, type Board, Player } from "../types";
+import { Choice, type Move, type Board, Player } from "../types";
 import { useGame, useRound } from "../hooks";
 import { RoundProvider } from "../contexts";
 import { size } from "../services/game";
@@ -177,7 +177,7 @@ const Board = (): JSX.Element => {
 };
 
 interface CellProps {
-  coordinates: Moov;
+  coordinates: Move;
 }
 
 const Cell = (props: CellProps): JSX.Element => {
@@ -236,7 +236,7 @@ const SmallBoard = (props: SmallBoardProps): JSX.Element => {
 };
 
 interface SmallCellProps {
-  coordinates: Moov;
+  coordinates: Move;
   choice: Choice;
 }
 

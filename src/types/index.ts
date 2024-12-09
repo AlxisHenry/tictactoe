@@ -22,7 +22,7 @@ export type Player = {
   difficulty?: Difficulty;
 };
 
-export type Moov = {
+export type Move = {
   x: number;
   y: number;
 };
