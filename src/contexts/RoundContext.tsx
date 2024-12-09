@@ -2,7 +2,7 @@ import { createContext, JSX } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import Swal from "sweetalert2";
 import { useGame } from "../hooks";
-import { Board, Choice, GameMode, Player, type Round } from "../types";
+import { Board, defaultPlayer, GameMode, Player, type Round } from "../types";
 import {
   BOARD_SIZE,
   getOpponent,
@@ -15,14 +15,7 @@ type RoundContextType = Round & {
   setCurrentPlayer: (player: Player) => void;
   play: (x: number, y: number) => void;
   winnerCheck: () => void;
-};
-
-const defaultPlayer: Player = {
-  name: "",
-  score: 0,
-  symbol: Choice.O,
-  isAI: false,
-  wins: 0,
+  increaseTimer: () => void;
 };
 
 export const RoundContext = createContext<RoundContextType>({
@@ -33,6 +26,7 @@ export const RoundContext = createContext<RoundContextType>({
   winner: null,
   setCurrentPlayer: () => {},
   winnerCheck: () => {},
+  increaseTimer: () => {},
 });
 
 interface RoundProviderProps {
@@ -53,14 +47,6 @@ export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
   const [currentPlayer, setCurrentPlayer] = useState<Player>(defaultPlayer);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((prev) => prev + 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
     if (players.length === 0 || !player1 || !player2) return;
     setCurrentPlayer(Math.random() < 0.5 ? player1 : player2);
   }, [players]);
@@ -70,8 +56,6 @@ export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
 
     const moov = getBestMove(board);
 
-    console.log(moov);
-
     if (!moov) return;
 
     setTimeout(() => play(moov.x, moov.y), 500);
@@ -80,7 +64,7 @@ export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
   const finish = (winner: Player | null) => {
     if (players.length === 0 || !player1 || !player2) return;
 
-    pushToHistory({ board, winner, timer });
+    pushToHistory({ board, winner, duration: timer });
     setWinner(winner);
     setBoard(createEmptyBoard());
     setCurrentPlayer(Math.random() < 0.5 ? player1 : player2);
@@ -98,6 +82,8 @@ export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
 
     winnerCheck();
   };
+
+  const increaseTimer = () => setTimer((prev) => prev + 1);
 
   const winnerCheck = () => {
     const winner = getWinner(board);
@@ -134,6 +120,7 @@ export const RoundProvider = (props: RoundProviderProps): JSX.Element => {
       value={{
         timer,
         board,
+        increaseTimer,
         play,
         winner,
         winnerCheck,

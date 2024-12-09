@@ -7,8 +7,6 @@ import {
   type GameHistoryRound,
   type GameHistoryBeforeSave,
   GameMode,
-  Choice,
-  Difficulty,
 } from "../types";
 
 type GameContextType = Game & {
@@ -18,7 +16,7 @@ type GameContextType = Game & {
   start: (
     mode: GameMode,
     player1: Player | null,
-    player2: Player | null | undefined,
+    player2: Player | null,
   ) => void;
 };
 
@@ -53,9 +51,7 @@ export const GameProvider = (props: GameProviderProps): JSX.Element => {
       ...prev,
       {
         id: prev.length + 1,
-        duration: h.timer,
-        board: h.board,
-        winner: h.winner,
+        ...h,
       },
     ]);
   };
@@ -63,9 +59,9 @@ export const GameProvider = (props: GameProviderProps): JSX.Element => {
   const start = (
     mode: GameMode,
     player1: Player | null,
-    player2?: Player | null,
+    player2: Player | null,
   ): void => {
-    if (!player1 || (mode === GameMode.Player && !player2)) {
+    if (!player1 || !player2) {
       Swal.fire({
         title: "Erreur",
         text: "Veuillez renseigner les noms des joueurs",
@@ -74,21 +70,9 @@ export const GameProvider = (props: GameProviderProps): JSX.Element => {
       return;
     }
 
-    let p2 =
-      player2 && mode !== GameMode.AI
-        ? player2
-        : {
-            name: "IA",
-            score: 0,
-            symbol: Choice.O,
-            isAI: true,
-            wins: 0,
-            difficulty: Difficulty.Easy,
-          };
-
     setPlayer1(player1);
-    setPlayer2(p2);
-    setPlayers([player1, p2]);
+    setPlayer2(player2);
+    setPlayers([player1, player2]);
     setMode(mode);
     setIsPlaying(true);
   };

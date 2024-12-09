@@ -5,7 +5,7 @@ import { useGame, useRound } from "../hooks";
 import { RoundProvider } from "../contexts";
 import { size } from "../services/game";
 import { Container } from "../components";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 export const Game = (): JSX.Element => {
   return (
@@ -89,22 +89,35 @@ const History = (): JSX.Element => {
 
 const Header = (): JSX.Element => {
   const { player1, player2 } = useGame();
-  const { timer } = useRound();
 
   return (
     <div className="relative mb-8 p-4 rounded-lg flex justify-between items-center bg-white/5 backdrop-blur-lg shadow-lg border border-white/20">
       <HeaderPlayer player={player1} />
-
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="relative flex items-center justify-center w-24 h-24 bg-white/10 rounded-full shadow-md backdrop-blur-md border border-white/30">
-          <div className="absolute w-full h-full animate-spin-slow bg-gradient-to-r from-purple-500 to-purple-500 rounded-full blur-md opacity-10"></div>
-          <span className="text-white font-bold text-2xl">
-            {formatTimerInMinutes(timer)}
-          </span>
-        </div>
-      </div>
-
+      <Timer />
       <HeaderPlayer player={player2} />
+    </div>
+  );
+};
+
+const Timer = (): JSX.Element => {
+  const { timer, increaseTimer } = useRound();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      increaseTimer();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="relative flex items-center justify-center w-24 h-24 bg-white/10 rounded-full shadow-md backdrop-blur-md border border-white/30">
+        <div className="absolute w-full h-full animate-spin-slow bg-gradient-to-r from-purple-500 to-purple-500 rounded-full blur-md opacity-10"></div>
+        <span className="text-white font-bold text-2xl">
+          {formatTimerInMinutes(timer)}
+        </span>
+      </div>
     </div>
   );
 };

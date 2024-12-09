@@ -4,9 +4,9 @@ export enum Choice {
 }
 
 export enum Difficulty {
-  Easy = "easy",
-  Medium = "medium",
-  Hard = "hard",
+  Easy = "Facile",
+  Medium = "Moyen",
+  Hard = "Difficile",
 }
 
 export type Cell = Choice | null;
@@ -29,7 +29,7 @@ export type Moov = {
 
 export type Form = {
   player1: Player | null;
-  player2?: Player | null;
+  player2: Player | null;
   mode: GameMode;
 };
 
@@ -55,7 +55,7 @@ export type GameHistoryRound = {
 export type GameHistoryBeforeSave = {
   board: Board;
   winner: Player | null;
-  timer: number;
+  duration: number;
 };
 
 export type Game = {
@@ -64,4 +64,20 @@ export type Game = {
   player2: Player | null;
   mode: GameMode;
   history: GameHistoryRound[];
+};
+
+export const defaultPlayer: Player = {
+  name: "",
+  score: 0,
+  symbol: Choice.X,
+  isAI: false,
+  wins: 0,
+};
+
+export const defaultAI = {
+  name: "IA",
+  score: 0,
+  symbol: Choice.O,
+  isAI: true,
+  wins: 0,
 };

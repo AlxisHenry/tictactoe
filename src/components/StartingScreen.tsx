@@ -1,6 +1,13 @@
 import { useState } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
-import { Choice, type Form, GameMode } from "../types";
+import {
+  Choice,
+  Difficulty,
+  type Form,
+  GameMode,
+  defaultAI,
+  defaultPlayer,
+} from "../types";
 import { useGame } from "../hooks";
 
 export const StartingScreen = (): JSX.Element => {
@@ -20,7 +27,7 @@ export const StartingScreen = (): JSX.Element => {
           <span class="text-lg font-semibold text-white">Votre nom</span>
           <input
             type="text"
-            class="mt-1 block w-full rounded-md border-gray-300 bg-white/50 text-white shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-300 focus:ring-opacity-50"
+            class="mt-1 block w-full rounded-md border-purple-300 bg-white/20 text-white placeholder-gray-200 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-300 focus:ring-opacity-50"
             placeholder="Entrez votre nom"
             value={form.player1?.name}
             onChange={(e: any) => {
@@ -28,11 +35,9 @@ export const StartingScreen = (): JSX.Element => {
                 setForm({
                   ...form,
                   player1: {
+                    ...defaultPlayer,
                     name: e.target.value,
-                    score: 0,
                     symbol: Choice.X,
-                    isAI: false,
-                    wins: 0,
                   },
                 });
               } else {
@@ -64,7 +69,16 @@ export const StartingScreen = (): JSX.Element => {
                 name="mode"
                 class="form-radio text-purple-600"
                 checked={form.mode === GameMode.AI}
-                onChange={() => setForm({ ...form, mode: GameMode.AI })}
+                onChange={() => {
+                  setForm({
+                    ...form,
+                    mode: GameMode.AI,
+                    player2: {
+                      ...defaultAI,
+                      difficulty: Difficulty.Easy,
+                    },
+                  });
+                }}
               />
               <span class="ml-2">Jouer contre une IA</span>
             </label>
@@ -73,21 +87,21 @@ export const StartingScreen = (): JSX.Element => {
 
         {form.mode === GameMode.Player && (
           <label class="block mb-4">
-            <span class="text-lg font-semibold text-white">Nom du second joueur</span>
+            <span class="text-lg font-semibold text-white">
+              Nom du second joueur
+            </span>
             <input
               type="text"
-              class="mt-1 block w-full rounded-md border-gray-300 bg-white/50 text-white shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-300 focus:ring-opacity-50"
+              class="mt-1 block w-full rounded-md border-purple-300 bg-white/20 text-white placeholder-gray-100 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-300 focus:ring-opacity-50"
               placeholder="Entrez le nom du second joueur"
               onChange={(e: any) => {
                 if (!form.player2) {
                   setForm({
                     ...form,
                     player2: {
+                      ...defaultPlayer,
                       name: e.target.value,
-                      score: 0,
                       symbol: Choice.O,
-                      isAI: false,
-                      wins: 0,
                     },
                   });
                 } else {
@@ -98,6 +112,34 @@ export const StartingScreen = (): JSX.Element => {
                 }
               }}
             />
+          </label>
+        )}
+
+        {form.mode === GameMode.AI && (
+          <label class="block mb-4">
+            <span class="text-lg font-semibold text-white">Difficulté</span>
+            <div class="flex flex-col">
+              {Object.values(Difficulty).map((difficulty) => (
+                <label class="inline-flex items-center mt-2 text-white">
+                  <input
+                    type="radio"
+                    name="difficulty"
+                    class="form-radio text-purple-600"
+                    checked={form.player2?.difficulty === difficulty}
+                    onChange={() => {
+                      setForm({
+                        ...form,
+                        player2: {
+                          ...defaultAI,
+                          difficulty,
+                        },
+                      });
+                    }}
+                  />
+                  <span class="ml-2">{difficulty}</span>
+                </label>
+              ))}
+            </div>
           </label>
         )}
 
