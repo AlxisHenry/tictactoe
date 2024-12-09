@@ -46,9 +46,16 @@ export type Round = {
 };
 
 export type GameHistoryRound = {
-  timer: number;
+  id: number;
+  duration: number;
   board: Board;
   winner: Player | null;
+};
+
+export type GameHistoryBeforeSave = {
+  board: Board;
+  winner: Player | null;
+  timer: number;
 };
 
 export type Game = {

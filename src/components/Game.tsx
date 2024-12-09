@@ -27,10 +27,23 @@ const History = (): JSX.Element => {
   return (
     <>
       <button
-        className="absolute top-0 right-0 p-2 bg-purple-500/20 rounded-md shadow-md text-white font-semibold transition-colors hover:bg-purple-500/10"
+        className="absolute top-0 right-0 p-2 bg-purple-300/20 rounded-b-md shadow-md text-white font-semibold transition-colors hover:bg-purple-300/30"
         onClick={() => setIsOpen(!isOpen)}
       >
-        Historique
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5M12 17.25h8.25"
+          />
+        </svg>
       </button>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -39,27 +52,30 @@ const History = (): JSX.Element => {
             onClick={() => setIsOpen(false)}
           ></div>
 
-          <div className="relative z-60 bg-white/5 backdrop-blur-lg shadow-lg rounded-lg p-6 border border-white/30 max-h-96 w-100 overflow-y-auto scale-95 opacity-0 animate-slideIn">
-            <h2 className="text-lg font-semibold text-gray-100 mb-4">
-              Parties terminées
+          <div className="absolute z-60 bg-white/5 backdrop-blur-lg shadow-lg rounded-lg w-full animate-slideIn max-w-2xl pt-2 min-h-[600px] max-h-[600px]  overflow-y-auto no-scrollbar">
+            <h2 className="text-lg mt-2 font-semibold text-gray-100 mb-4 ml-8">
+              Votre historique
             </h2>
-            <ul className="space-y-3">
-              {history.map((game, index) => (
-                <li
-                  key={index}
-                  className="flex flex-col p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
-                >
-                  <span className="text-sm text-gray-300"></span>
-                  <span className="text-xs text-gray-400">
-                    Durée : {game.timer}
-                  </span>
-                  <SmallBoard />
-                </li>
-              ))}
+
+            <ul className="mb-3 px-4 gap-3 flex-wrap flex justify-between">
+              {history
+                .sort((a, b) => b.id - a.id)
+                .map((game, index) => (
+                  <li
+                    key={index}
+                    className="p-3 flex flex-col justify-center items-center gap-4 rounded-lg transition-colors"
+                  >
+                    <span className="text-gray-100 font-semibold">
+                      Partie {game.id} - {game.winner?.name || "Égalité"} -{" "}
+                      {formatTimerInMinutes(game.duration)}
+                    </span>
+                    <SmallBoard board={game.board} />
+                  </li>
+                ))}
             </ul>
 
             <button
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-100"
+              className="absolute top-4 right-8 text-gray-400 hover:text-gray-100 transition-colors focus:outline-none text-xl font-bold"
               onClick={() => setIsOpen(false)}
             >
               ✕
@@ -76,7 +92,7 @@ const Header = (): JSX.Element => {
   const { timer } = useRound();
 
   return (
-    <div className="relative mb-14 p-4 rounded-lg flex justify-between items-center bg-white/5 backdrop-blur-lg shadow-lg border border-white/20">
+    <div className="relative mb-8 p-4 rounded-lg flex justify-between items-center bg-white/5 backdrop-blur-lg shadow-lg border border-white/20">
       <HeaderPlayer player={player1} />
 
       <div className="absolute inset-0 flex items-center justify-center">
@@ -184,45 +200,47 @@ const Cell = (props: CellProps): JSX.Element => {
   );
 };
 
-const SmallBoard = (): JSX.Element => {
+interface SmallBoardProps {
+  board: Board;
+}
+
+const SmallBoard = (props: SmallBoardProps): JSX.Element => {
+  const { board } = props;
+
   return (
     <div className="grid grid-cols-3 gap-4 p-8 bg-white/5 backdrop-blur-lg shadow-md rounded-lg border border-white/10">
       {size.map((_, x) =>
-        size.map((_, y) => <SmallCell key={`${x}-${y}`} coordinates={{ x, y }} />),
+        size.map((_, y) => (
+          <SmallCell
+            key={`${x}-${y}`}
+            coordinates={{ x, y }}
+            choice={board[x][y] as Choice}
+          />
+        )),
       )}
     </div>
   );
-}
+};
 
 interface SmallCellProps {
   coordinates: Moov;
+  choice: Choice;
 }
 
 const SmallCell = (props: SmallCellProps): JSX.Element => {
-  const { coordinates } = props;
-  const { board, currentPlayer, play } = useRound();
-
-  const { x, y } = coordinates;
-  const choice = board[x][y];
+  const { coordinates, choice } = props;
 
   return (
     <div
-      onClick={() => {
-        if (currentPlayer.isAI) return;
-
-        play(x, y);
-      }}
       data-coordinates={`${coordinates.x}-${coordinates.y}`}
       className={clsx(
-        "w-16 h-16 rounded-md flex items-center justify-center text-2xl font-bold cursor-pointer transition-transform",
+        "w-16 h-16 rounded-md flex items-center justify-center text-2xl font-bold transition-transform",
         {
           "bg-purple-600 text-white shadow-md border-2 border-purple-500":
             choice === Choice.X,
           "bg-purple-500 text-white shadow-md border-2 border-purple-400":
             choice === Choice.O,
-          "bg-white/5 text-gray-400 hover:bg-gray-50/20 hover:text-gray-700 border-2 border-white/20":
-            !choice,
-          "hover:scale-105": !choice,
+          "bg-white/5 text-gray-400 border-2 border-white/20": !choice,
         },
       )}
     >

@@ -7,7 +7,7 @@ export const Layout = (props: { children: JSX.Element }): JSX.Element => {
         "flex flex-col min-h-screen bg-gradient-to-b from-purple-700 to-purple-800 text-white"
       }
     >
-      <div class="flex-grow bg-white/10 backdrop-blur-md rounded-xl p-4 shadow-lg">
+      <div class="flex-grow bg-white/10 backdrop-blur-md rounded-xl shadow-lg">
         {props.children}
       </div>
     </div>

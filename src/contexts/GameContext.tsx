@@ -5,6 +5,7 @@ import {
   type Game,
   type Player,
   type GameHistoryRound,
+  type GameHistoryBeforeSave,
   GameMode,
   Choice,
   Difficulty,
@@ -13,7 +14,7 @@ import {
 type GameContextType = Game & {
   isPlaying: boolean;
   setMode: (mode: GameMode) => void;
-  pushToHistory: (history: GameHistoryRound) => void;
+  pushToHistory: (history: GameHistoryBeforeSave) => void;
   start: (
     mode: GameMode,
     player1: Player | null,
@@ -47,8 +48,16 @@ export const GameProvider = (props: GameProviderProps): JSX.Element => {
   const [mode, setMode] = useState<GameMode>(GameMode.Player);
   const [history, setHistory] = useState<GameHistoryRound[]>([]);
 
-  const pushToHistory = (history: GameHistoryRound) => {
-    setHistory((prev) => [...prev, history]);
+  const pushToHistory = (h: GameHistoryBeforeSave) => {
+    setHistory((prev) => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        duration: h.timer,
+        board: h.board,
+        winner: h.winner,
+      },
+    ]);
   };
 
   const start = (
